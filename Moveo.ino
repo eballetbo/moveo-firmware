@@ -3,6 +3,7 @@
 // -*- mode: C++ -*-
 
 #include <AccelStepper.h>
+#include <Servo.h>
 #include <MultiStepper.h>
 
 // For RAMPS 1.4
@@ -26,6 +27,8 @@
 #define B_DIR_PIN          34 // E1_DIR_PIN
 #define B_ENABLE_PIN       30 // E1_ENABLE_PIN
 
+#define SERVO0_PIN         11
+
 // The number of steppers that we want to manage
 #define MULTISTEPPER_NUM_STEPPERS 5
 
@@ -38,7 +41,8 @@ AccelStepper StepperB(AccelStepper::DRIVER, B_STEP_PIN, B_DIR_PIN);
 
 // Up to 10 steppers can be handled as a group by MultiStepper
 MultiStepper steppers;
-
+// Create servo object to control the nipper
+Servo nipper;
 // String to hold input command
 String inString = "";
 
@@ -89,6 +93,9 @@ void setup()
   steppers.addStepper(StepperA);
   steppers.addStepper(StepperB);
 
+  // Attach to the servo
+  nipper.attach(SERVO0_PIN);
+
   // Open serial communications and wait for port to open:
   Serial.begin(115200);
   while (!Serial) {
@@ -120,6 +127,16 @@ void loop()
           Serial.print(positions[i]);
         }
         Serial.println();
+      } else if (gcode == "M280") { // M280: Set servo positon
+        String str = getSubstring(inString, ' ', 1);
+        long angle = str.toInt();
+        if (angle >= 0 && angle <= 180) {
+          nipper.write(angle);
+          Serial.print("M280 ");
+          Serial.println(angle);
+        } else {
+          Serial.println("M280: Invalid parameter");
+        }
       } else {
         Serial.println("Unknown G-code");
       }
