@@ -43,3 +43,22 @@ G1 10 -15 20
 G1 10 0 0 -20 20
 ```
 
+### M280 : Set servo positon
+
+**Usage:**
+```
+M280 Annn
+```
+
+**Parameters:**
+
+All parameters are required.
+```
+Annn The angle (between 0 and 180)
+```
+
+**Examples:**
+```
+M280 0
+M280 90
+```
