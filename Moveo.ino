@@ -39,6 +39,26 @@ AccelStepper StepperB(AccelStepper::DRIVER, B_STEP_PIN, B_DIR_PIN);
 // Up to 10 steppers can be handled as a group by MultiStepper
 MultiStepper steppers;
 
+// String to hold input command
+String inString = "";
+
+String getSubstring(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
 void setup()
 {  
   // Configure stepper X
@@ -69,21 +89,47 @@ void setup()
   steppers.addStepper(StepperA);
   steppers.addStepper(StepperB);
 
+  // Open serial communications and wait for port to open:
   Serial.begin(115200);
+  while (!Serial) {
+    ; // Wait for serial port to connect. Needed for native USB port only
+  }
 }
 
 void loop()
 {
   long positions[MULTISTEPPER_NUM_STEPPERS];  // Array of desired stepper positions
+  String gcode;
   long steps;
   int i;
 
-  Serial.setTimeout(2000); // 2 seconds
-  if (Serial.available()) {
-    steps = Serial.parseInt();
-    if (steps != 0)
-      for (i = 0; i < MULTISTEPPER_NUM_STEPPERS; i++)
-        positions[i] = steps;
+  // Read serial input:
+  while (Serial.available() > 0) {
+    int inChar = Serial.read();
+    // If you get a newline or a carry return, parse the string
+    if (inChar == '\r' || inChar == '\n') {
+      // The first substring is the G-code
+      gcode = getSubstring(inString, ' ', 0);
+      // G01: Linear interpolation
+      if (gcode == "G01") {
+        Serial.print("G01");
+        for (i = 0; i < MULTISTEPPER_NUM_STEPPERS; i++) {
+          String str = getSubstring(inString, ' ', i + 1);
+          positions[i] = str.toInt();
+          Serial.print(' ');
+          Serial.print(positions[i]);
+        }
+        Serial.println();
+      } else {
+        Serial.println("Unknown G-code");
+      }
+
+      // Clear the string for new input
+      inString = "";
+    } else {
+      // Convert the incoming byte to a char and add it to the string
+      inString += (char)inChar;
+    }
   }
 
   steppers.moveTo(positions);
