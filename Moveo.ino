@@ -66,25 +66,27 @@ String getSubstring(String data, char separator, int index)
 void setup()
 {  
   // Configure stepper X
-  StepperX.setMaxSpeed(1000);
-  StepperX.setSpeed(2 * 200);
-  StepperX.setEnablePin(X_ENABLE_PIN);
+  StepperX.setMaxSpeed(200);
+  //StepperX.setSpeed(2 * 200);
+  //StepperX.setEnablePin(X_ENABLE_PIN);
   // Configure stepper Y
-  StepperY.setMaxSpeed(1000);
-  StepperY.setSpeed(2 * 200);
-  StepperY.setEnablePin(Y_ENABLE_PIN);
+  StepperY.setMaxSpeed(200);
+  //StepperY.setSpeed(2 * 200);
+  //StepperY.setEnablePin(Y_ENABLE_PIN);
   // Configure stepper Z
-  StepperZ.setMaxSpeed(1000);
-  StepperZ.setSpeed(2 * 200);
-  StepperZ.setEnablePin(Z_ENABLE_PIN);
+  StepperZ.setMaxSpeed(200);
+  //StepperZ.setSpeed(2 * 200);
+  //StepperZ.setEnablePin(Z_ENABLE_PIN);
   // Configure stepper A
-  StepperA.setMaxSpeed(1000);
-  StepperA.setSpeed(2 * 200);
-  StepperA.setEnablePin(A_ENABLE_PIN);
+  StepperA.setMaxSpeed(200);
+  //StepperA.setSpeed(2 * 200);
+  //StepperA.setEnablePin(A_ENABLE_PIN);
   // Configure stepper B
-  StepperB.setMaxSpeed(1000);
-  StepperB.setSpeed(2 * 200);
-  StepperB.setEnablePin(B_ENABLE_PIN);
+  StepperB.setMaxSpeed(200);
+  //StepperB.setSpeed(2 * 200);
+  //StepperB.setEnablePin(B_ENABLE_PIN);
+
+ 
 
   // Then give them to MultiStepper to manage
   steppers.addStepper(StepperX);
@@ -92,15 +94,36 @@ void setup()
   steppers.addStepper(StepperZ);
   steppers.addStepper(StepperA);
   steppers.addStepper(StepperB);
+  
+
+long positions[MULTISTEPPER_NUM_STEPPERS];
 
   // Attach to the servo
   nipper.attach(SERVO0_PIN);
 
   // Open serial communications and wait for port to open:
+  
   Serial.begin(115200);
+   
+    
+ long positions1[5];  // Array of desired stepper positions
+ positions1[0]=0;
+ positions1[1]=0;
+ positions1[2]=0;
+ positions1[3]=0;
+ positions1[4]=0;
+ steppers.moveTo(positions1);
+
+ 
+  steppers.runSpeedToPosition();  // Blocks until all are in position
+
   while (!Serial) {
     ; // Wait for serial port to connect. Needed for native USB port only
   }
+
+  
+    
+
 }
 
 void loop()
@@ -127,6 +150,8 @@ void loop()
           Serial.print(positions[i]);
         }
         Serial.println();
+        steppers.moveTo(positions);
+        steppers.runSpeedToPosition();  // Blocks until all are in position
       } else if (gcode == "M280") { // M280: Set servo positon
         String str = getSubstring(inString, ' ', 1);
         long angle = str.toInt();
@@ -149,7 +174,5 @@ void loop()
     }
   }
 
-  steppers.moveTo(positions);
-  steppers.runSpeedToPosition();  // Blocks until all are in position
 }
 
