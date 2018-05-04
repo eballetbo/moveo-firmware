@@ -135,6 +135,8 @@ void loop()
           Serial.print(positions[i]);
         }
         Serial.println();
+        steppers.moveTo(positions);
+        steppers.runSpeedToPosition();  // Blocks until all are in position
       } else if (gcode == "M280") { // M280: Set servo positon
         String str = getSubstring(inString, ' ', 1);
         long angle = str.toInt();
@@ -156,8 +158,5 @@ void loop()
       inString += (char)inChar;
     }
   }
-
-  steppers.moveTo(positions);
-  steppers.runSpeedToPosition();  // Blocks until all are in position
 }
 
