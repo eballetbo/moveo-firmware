@@ -65,6 +65,8 @@ String getSubstring(String data, char separator, int index)
 
 void setup()
 {  
+  long positions[MULTISTEPPER_NUM_STEPPERS];
+
   // Configure stepper X
   StepperX.setMaxSpeed(1000);
   StepperX.setSpeed(2 * 200);
@@ -92,6 +94,12 @@ void setup()
   steppers.addStepper(StepperZ);
   steppers.addStepper(StepperA);
   steppers.addStepper(StepperB);
+
+  // Set all the steppers to the initial position
+  for (int i = 0; i < MULTISTEPPER_NUM_STEPPERS; i++)
+    positions[i] = 0;
+  steppers.moveTo(positions);
+  steppers.runSpeedToPosition();  // Blocks until all are in position
 
   // Attach to the servo
   nipper.attach(SERVO0_PIN);
