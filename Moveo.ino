@@ -137,7 +137,7 @@ void loop()
         Serial.println();
         steppers.moveTo(positions);
         steppers.runSpeedToPosition();  // Blocks until all are in position
-      } else if (gcode == "M280") { // M280: Set servo positon
+      } else if (gcode == "M280") { // M280: Set servo position
         String str = getSubstring(inString, ' ', 1);
         long angle = str.toInt();
         if (angle >= 0 && angle <= 180) {
