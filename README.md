@@ -19,11 +19,11 @@ Moveo firmware is published under the [GPLv3 license](https://raw.githubusercont
 
 This section tries to describe the flavour of G-codes that the Moveo firmware use and how they work.
 
-### G1 : Linear Interpolation
+### G01 : Linear Interpolation
 
 **Usage:**
 ```
-G1 Xnnn Ynnn Znnn Annn Bnnn
+G01 Xnnn Ynnn Znnn Annn Bnnn
 ```
 
 **Parameters:**
@@ -39,8 +39,8 @@ Bnnn The position to move to on the B axis (in steps)
 
 **Examples:**
 ```
-G1 10 -15 20
-G1 10 0 0 -20 20
+G01 10 -15 20
+G01 10 0 0 -20 20
 ```
 
 ### M280 : Set servo positon
