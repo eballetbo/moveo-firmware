@@ -1,4 +1,4 @@
-# Moveo BCN3D Frimware
+# Moveo BCN3D Firmware
 
 Moveo is an alternative firmware for the Open source 3D printer robot arm [BCN3D-MOVEO](https://www.bcn3dtechnologies.com/en/bcn3d-moveo-the-future-of-learning/) based on the [Arduino](https://www.arduino.cc/) platform.
 
